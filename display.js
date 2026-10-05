@@ -1,95 +1,168 @@
-// Week 4 JavaScript Portfolio Project - Display Generation
-// Students will learn to generate HTML using JavaScript template literals
-
-// TODO: During class, we'll build HTML strings using our portfolio data
-
-// Example 1: Simple template literal (students will try this first)
-// let welcomeMessage = `Welcome to ${portfolio.owner.name}'s portfolio!`;
-// console.log(welcomeMessage);
-
-// TODO: Students will build the header section
-// Instructor will demonstrate, then students will code along
-/*
+// Generate the header and introduction from the portfolio object.
 let headerHTML = `
     <header>
+        <p class="eyebrow">Portfolio</p>
         <h1>${portfolio.owner.name}</h1>
         <p class="tagline">${portfolio.owner.title}</p>
         <p class="location">📍 ${portfolio.owner.location}</p>
     </header>
 `;
-
-// We'll use document.write() for immediate visual feedback
 document.write(headerHTML);
-*/
 
-// TODO: Students will build the skills section
-// This uses a simple for loop (they know array.length and array[i])
-/*
-let skillsHTML = '<section id="skills"><h2>My Skills</h2><ul class="skills-list">';
+let aboutHTML = `
+    <section id="about">
+        <h2>About Me</h2>
+        <p>${portfolio.owner.bio}</p>
+        <p class="contact-detail">Email: <a href="mailto:${portfolio.owner.email}">${portfolio.owner.email}</a></p>
+    </section>
+`;
+document.write(aboutHTML);
 
-// Using a basic for loop to add each skill
-for (let i = 0; i < portfolio.skills.length; i++) {
-    skillsHTML = skillsHTML + `<li>${portfolio.skills[i]}</li>`;
+// Tier 2 extension: group skills by category with indexed loops and bracket notation.
+let skillsHTML = '<section id="skills"><h2>Skills &amp; Concepts</h2><div class="skill-groups">';
+let skillCount = 0;
+
+for (let i = 0; i < categoryNames.length; i++) {
+    let category = categoryNames[i];
+    skillsHTML = skillsHTML + `<div class="skill-group"><h3>${category}</h3><ul class="skills-list">`;
+
+    let categorySkills = portfolio.skillCategories[category];
+    for (let j = 0; j < categorySkills.length; j++) {
+        skillsHTML = skillsHTML + `<li>${categorySkills[j]}</li>`;
+        skillCount++;
+    }
+
+    skillsHTML = skillsHTML + '</ul></div>';
 }
 
-skillsHTML = skillsHTML + '</ul></section>';
+skillsHTML = skillsHTML + '</div></section>';
 document.write(skillsHTML);
-*/
 
-// TODO: Students will build the projects section
-// This is more complex because we're working with an array of objects
-/*
-let projectsHTML = '<section id="projects"><h2>My Projects</h2><div class="projects-grid">';
+// Render project cards. showOnly and query are independent display settings.
+let projectsHTML = '<section id="projects"><h2>Projects</h2><div class="projects-grid">';
+let renderedProjects = 0;
 
 for (let i = 0; i < portfolio.projects.length; i++) {
     let project = portfolio.projects[i];
-    
-    // Build the technologies list
-    let techList = project.technologies.join(", ");
-    
-    projectsHTML = projectsHTML + `
-        <article class="project-card">
-            <h3>${project.title}</h3>
-            <p>${project.description}</p>
-            <p class="tech">Technologies: ${techList}</p>
-            <p class="date">Completed: ${project.completionDate}</p>
-        </article>
-    `;
-}
 
-projectsHTML = projectsHTML + '</div></section>';
-document.write(projectsHTML);
-*/
+    // Tier 1 extension: match every technology so a later tag can qualify a project.
+    let technologyMatches = false;
+    for (let t = 0; t < project.technologies.length; t++) {
+        if (project.technologies[t] === showOnly) {
+            technologyMatches = true;
+        }
+    }
+    let passesTechnology = showOnly === "all" || technologyMatches;
 
-// TODO: Advanced students can try creating different versions
-// Example: Only show featured projects
-/*
-let featuredProjectsHTML = '<section><h2>Featured Projects</h2><div class="projects-grid">';
+    // Tier 3 extension: check title, description, and each technology without regex.
+    let titleLower = project.title.toLowerCase();
+    let descriptionLower = project.description.toLowerCase();
+    let queryLower = query.toLowerCase();
+    let titleMatches = query !== "" && titleLower.includes(queryLower);
+    let descriptionMatches = query !== "" && descriptionLower.includes(queryLower);
+    let technologyQueryMatches = false;
 
-for (let i = 0; i < portfolio.projects.length; i++) {
-    let project = portfolio.projects[i];
-    
-    // Only include if featured is true
-    if (project.featured === true) {
-        let techList = project.technologies.join(", ");
-        featuredProjectsHTML = featuredProjectsHTML + `
+    if (query !== "") {
+        for (let t = 0; t < project.technologies.length; t++) {
+            if (project.technologies[t].toLowerCase().includes(queryLower)) {
+                technologyQueryMatches = true;
+            }
+        }
+    }
+
+    let passesSearch = query === "" || titleMatches || descriptionMatches || technologyQueryMatches;
+
+    if (passesTechnology && passesSearch) {
+        let titleHTML = project.title;
+        if (query !== "") {
+            let titleIndex = titleLower.indexOf(queryLower);
+            if (titleIndex !== -1) {
+                let beforeMatch = project.title.slice(0, titleIndex);
+                let matchingText = project.title.slice(titleIndex, titleIndex + query.length);
+                let afterMatch = project.title.slice(titleIndex + query.length);
+                titleHTML = `${beforeMatch}<mark>${matchingText}</mark>${afterMatch}`;
+            }
+        }
+
+        // Tier 2 extension: render each technology as its own tag.
+        let tagsHTML = "";
+        for (let j = 0; j < project.technologies.length; j++) {
+            tagsHTML = tagsHTML + `<span class="tag">${project.technologies[j]}</span>`;
+        }
+
+        let featuredLabel = project.featured ? '<span class="featured-label">Featured</span>' : '';
+        projectsHTML = projectsHTML + `
             <article class="project-card">
-                <h3>${project.title} ⭐</h3>
+                ${featuredLabel}
+                <h3>${titleHTML}</h3>
                 <p>${project.description}</p>
-                <p class="tech">Technologies: ${techList}</p>
+                <div class="project-tags">${tagsHTML}</div>
+                <p class="date">Completed: ${project.completionDate}</p>
             </article>
         `;
+        renderedProjects++;
     }
 }
 
-featuredProjectsHTML = featuredProjectsHTML + '</div></section>';
-document.write(featuredProjectsHTML);
-*/
+if (renderedProjects === 0) {
+    projectsHTML = projectsHTML + '<p class="empty-state">No projects match these settings. Update showOnly or query in data.js.</p>';
+}
+projectsHTML = projectsHTML + '</div></section>';
+document.write(projectsHTML);
 
-// INSTRUCTOR NOTES:
-// - Start with simple template literals
-// - Show how to access object properties
-// - Demonstrate array iteration with for loops
-// - Use console.log() to debug each step
-// - Build HTML strings step by step
-// - Use document.write() to display results immediately
+// Tier 2 extension: count technologies across ALL projects, independent of showOnly/query.
+let techNames = [];
+let techCounts = [];
+
+for (let i = 0; i < portfolio.projects.length; i++) {
+    let project = portfolio.projects[i];
+    for (let j = 0; j < project.technologies.length; j++) {
+        let technology = project.technologies[j];
+        let foundIndex = -1;
+
+        for (let k = 0; k < techNames.length; k++) {
+            if (techNames[k] === technology) {
+                foundIndex = k;
+            }
+        }
+
+        if (foundIndex === -1) {
+            techNames.push(technology);
+            techCounts.push(1);
+        } else {
+            techCounts[foundIndex] = techCounts[foundIndex] + 1;
+        }
+    }
+}
+
+let technologySummaryHTML = '<section class="technology-summary"><h2>Technology Usage</h2><ul>';
+for (let i = 0; i < techNames.length; i++) {
+    technologySummaryHTML = technologySummaryHTML + `<li>${techCounts[i]} projects use ${techNames[i]}</li>`;
+}
+technologySummaryHTML = technologySummaryHTML + '</ul></section>';
+document.write(technologySummaryHTML);
+
+// Phase 4: inspect summary data and print featured projects.
+console.log("Portfolio Summary:");
+console.log(`${portfolio.owner.name} has ${skillCount} skills and ${portfolio.projects.length} projects.`);
+
+for (let i = 0; i < portfolio.projects.length; i++) {
+    if (portfolio.projects[i].featured === true) {
+        console.log("⭐ Featured:", portfolio.projects[i].title);
+    }
+}
+
+// Tier 1 extension: find the newest project without relying on array order.
+let latestTitle = portfolio.projects[0].title;
+let latestDate = portfolio.projects[0].completionDate;
+for (let i = 1; i < portfolio.projects.length; i++) {
+    if (portfolio.projects[i].completionDate > latestDate) {
+        latestTitle = portfolio.projects[i].title;
+        latestDate = portfolio.projects[i].completionDate;
+    }
+}
+console.log("Most recent project: " + latestTitle);
+
+// Phase 4: serialize the data for inspection in DevTools.
+let dataAsJSON = JSON.stringify(portfolio, null, 2);
+console.log("Portfolio data as JSON:", dataAsJSON);

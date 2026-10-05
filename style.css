@@ -32,6 +32,24 @@ body {
     gap: 2rem;
 }
 
+.nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.nav-brand {
+    color: #FDB515;
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-decoration: none;
+    letter-spacing: 0.08em;
+}
+
 .nav-menu a {
     color: white;
     text-decoration: none;
@@ -43,6 +61,14 @@ body {
 .nav-menu a:hover {
     background-color: #FDB515;
     color: #003262;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #FDB515;
+    outline-offset: 3px;
 }
 
 /* Main content */
@@ -80,6 +106,14 @@ header h1 {
     opacity: 0.8;
 }
 
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
 /* Sections */
 section {
     margin-bottom: 3rem;
@@ -111,6 +145,17 @@ section h2 {
     border-radius: 8px;
     border-left: 4px solid #FDB515;
     font-weight: 500;
+}
+
+.skill-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.skill-group h3 {
+    color: #003262;
+    margin-bottom: 0.8rem;
 }
 
 /* Projects section - will be generated */
@@ -149,9 +194,83 @@ section h2 {
     font-weight: 500;
 }
 
+.featured-label {
+    color: #705000;
+    background: #fff1bf;
+    border-radius: 999px;
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 1rem 0;
+    list-style: none;
+}
+
+.tag {
+    background: #e8eef5;
+    color: #003262;
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.82rem;
+}
+
+.date {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.technology-summary {
+    margin-top: 2rem;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1.5rem;
+}
+
+.technology-summary h3 {
+    color: #003262;
+    margin-bottom: 0.75rem;
+}
+
+.technology-summary ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding-left: 1.2rem;
+}
+
+.empty-state {
+    color: #555;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+mark {
+    background: #ffe58a;
+    color: inherit;
+    border-radius: 2px;
+}
+
 /* Contact form */
 .contact-form {
     max-width: 600px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1rem;
+}
+
+.form-field-full,
+.form-grid fieldset {
+    grid-column: 1 / -1;
 }
 
 .contact-form label {
@@ -161,8 +280,7 @@ section h2 {
     color: #003262;
 }
 
-.contact-form input,
-.contact-form select,
+.contact-form input:not([type="radio"]):not([type="checkbox"]),
 .contact-form textarea {
     width: 100%;
     padding: 0.8rem;
@@ -171,6 +289,10 @@ section h2 {
     border-radius: 5px;
     font-size: 1rem;
     transition: border-color 0.3s;
+}
+
+.contact-form textarea {
+    resize: vertical;
 }
 
 .contact-form input:focus,
@@ -217,6 +339,17 @@ legend {
     margin-bottom: 0.5rem;
 }
 
+.form-row label {
+    display: inline;
+    margin: 0;
+}
+
+footer {
+    text-align: center;
+    color: #555;
+    padding: 1.5rem;
+}
+
 .form-row input[type="radio"],
 .form-row input[type="checkbox"] {
     width: auto;
@@ -226,9 +359,18 @@ legend {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .nav-menu {
+    .nav-inner {
         flex-direction: column;
-        gap: 0.5rem;
+    }
+
+    .nav-menu {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .nav-menu a {
+        display: inline-block;
+        padding: 0.35rem 0.55rem;
     }
     
     header h1 {
@@ -244,6 +386,10 @@ legend {
     }
     
     .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
         grid-template-columns: 1fr;
     }
 }
